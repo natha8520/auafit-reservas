@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUA FIT · Reservas AquaBOARD</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#003049;--blue:#0077b6;--lb:#00b4d8;--bg:#f4f7fb;--card:#fff;--border:#e2e8f0;--text:#1a202c;--muted:#64748b;--success:#16a34a;--warn:#d97706;--danger:#dc2626}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.header-logo{color:#fff;font-size:20px;font-weight:700}.header-logo span{color:var(--lb)}
+.header-sub{color:rgba(255,255,255,.55);font-size:11px}
+.hbtn{background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.hbtn:hover{background:rgba(255,255,255,.2)}
+.page{display:none;padding:20px;max-width:760px;margin:0 auto}.page.active{display:block}
+.wnav{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--card);border-radius:12px;padding:12px 16px;border:1px solid var(--border)}
+.wbtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;font-size:16px}.wbtn:hover{background:var(--bg)}
+.wlbl{flex:1;text-align:center;font-size:14px;font-weight:600;color:var(--navy)}
+.dg{margin-bottom:20px}
+.dh{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;padding-left:4px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;transition:.15s}
+.cc:hover{border-color:#b0c4de;box-shadow:0 2px 8px rgba(0,48,73,.07)}
+.tc{background:var(--navy);color:#fff;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;min-width:64px;text-align:center;flex-shrink:0}
+.ci{flex:1;min-width:0}
+.cn{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.cl{font-size:12px;color:var(--muted)}
+.sw{text-align:right;flex-shrink:0;margin-right:10px}
+.sn{font-size:22px;font-weight:700}
+.sok{color:var(--navy)}.slow{color:var(--warn)}.szero{color:var(--danger)}
+.sl{font-size:10px;color:var(--muted);margin-top:-2px}
+.btn{padding:8px 16px;border-radius:20px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:.15s;white-space:nowrap}
+.br{background:var(--navy);color:#fff}.br:hover{background:var(--blue)}
+.bw{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+.bg{background:none;border:1px solid var(--border);color:var(--muted)}.bg:hover{background:var(--bg)}
+.bd{background:#fee2e2;color:var(--danger);border:1px solid #fca5a5}
+.bds{background:var(--danger);color:#fff}.bds:hover{background:#b91c1c}
+.bs{background:#dcfce7;color:var(--success);border:1px solid #86efac}
+.bx{background:#1D6F42;color:#fff;display:inline-flex;align-items:center;gap:6px}.bx:hover{background:#155734}
+.bsm{padding:5px 10px;font-size:11px;border-radius:8px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mt{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.ms{font-size:13px;color:var(--muted);margin-bottom:20px}
+.fg{margin-bottom:14px}
+.fl{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.fi{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:.15s;background:#fff;color:var(--text)}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,119,182,.1)}
+.fi.err{border-color:var(--danger)}
+.tc2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.to{border:2px solid var(--border);border-radius:12px;padding:16px 12px;cursor:pointer;text-align:center;transition:.15s}
+.to:hover{border-color:var(--blue)}.to.sel{border-color:var(--navy);background:#f0f7ff}
+.to .ti{font-size:28px;margin-bottom:6px}
+.to .tn{font-size:14px;font-weight:700;color:var(--navy)}
+.to .td{font-size:11px;color:var(--muted);margin-top:2px}
+.pg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px}
+.po{border:2px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:.15s}
+.po:hover{border-color:var(--blue)}.po.sel{border-color:var(--navy);background:#f0f7ff}
+.pn{font-size:13px;font-weight:700;color:var(--navy)}
+.pd{font-size:11px;color:var(--muted)}
+.pp{font-size:12px;font-weight:700;color:var(--success);margin-top:4px}
+.mf{display:flex;gap:8px;margin-top:20px}.mf .btn{flex:1;padding:12px}
+.cbox{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.ctit{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.citem{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;cursor:pointer}
+.citem input[type=checkbox]{margin-top:3px;flex-shrink:0;width:18px;height:18px;accent-color:var(--navy);cursor:pointer}
+.ctxt{font-size:12px;color:var(--muted);line-height:1.6}
+.ctxt b{color:var(--text);display:block;margin-top:6px}
+.sb{text-align:center;padding:10px 0}
+.si{width:60px;height:60px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.sig{background:#dcfce7}.sir{background:#fee2e2}.sia{background:#fef3c7}
+.stit{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.sdet{font-size:13px;color:var(--muted);line-height:1.6}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.sv{font-size:24px;font-weight:700;color:var(--navy)}.slbl{font-size:11px;color:var(--muted);margin-top:2px}
+.acard{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.ach{padding:12px 16px;background:#f8fafc;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.act{font-size:14px;font-weight:700;color:var(--navy)}
+.pb{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.pf{height:100%;border-radius:4px;transition:width .3s}
+.pok{background:var(--navy)}.plo{background:var(--warn)}.pfu{background:var(--danger)}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
+.bbl{background:#dbeafe;color:#1d4ed8}.bgr{background:#dcfce7;color:#16a34a}
+.bam{background:#fef3c7;color:#92400e}.bre{background:#fee2e2;color:#dc2626}
+.rl{max-height:280px;overflow-y:auto}
+.rr{padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9;font-size:13px}
+.rr:last-child{border-bottom:none}
+.av{width:32px;height:32px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1d4ed8;flex-shrink:0}
+.ri{flex:1;min-width:0}
+.rn{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd{font-size:11px;color:var(--muted)}
+.sw2{position:relative;margin-bottom:16px}
+.si2{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none}
+.si2:focus{border-color:var(--blue)}
+.sic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.wb{background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px}
+.ld{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+.sp{width:28px;height:28px;border:3px solid #e2e8f0;border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stl{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.ntf{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:200;animation:sli .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+@keyframes sli{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.eb{background:#f0f7ff;border:1.5px solid #bae6fd;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--blue)}
+.eb strong{color:var(--navy)}
+.div{border:none;border-top:1px solid var(--border);margin:16px 0}
+.atb{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.ch{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;text-align:center}
+.rvc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.rvi{flex:1}
+.rvcl{font-size:15px;font-weight:700;color:var(--navy)}
+.rvcm{font-size:12px;color:var(--muted);margin-top:2px}
+@media(max-width:520px){.sgrid{grid-template-columns:1fr 1fr}.pg{grid-template-columns:1fr}.tc2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-logo">AUA<span>FIT</span></div>
+    <div class="header-sub">Hotel InterContinental Cali · AquaBOARD</div>
+  </div>
+  <button class="hbtn" onclick="showPage('cancel')" id="cancel-nav-btn">✕ Cancelar reserva</button>
+</div>
+
+<div class="page active" id="page-client">
+  <div class="wnav">
+    <button class="wbtn" onclick="changeWeek(-1)">‹</button>
+    <div class="wlbl" id="week-label">Cargando...</div>
+    <button class="wbtn" onclick="changeWeek(1)">›</button>
+  </div>
+  <div id="schedule-container"><div class="ld"><div class="sp"></div>Cargando horario...</div></div>
+</div>
+
+<div class="page" id="page-cancel">
+  <div class="ch">
+    <div style="font-size:40px;margin-bottom:10px">📋</div>
+    <div style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px">Cancelar mi reserva</div>
+    <div style="font-size:13px;color:var(--muted)">Ingresa tu número de WhatsApp para ver tus reservas activas</div>
+  </div>
+  <div class="fg">
+    <label class="fl">Teléfono / WhatsApp</label>
+    <div style="display:flex;gap:8px">
+      <input class="fi" id="cancel-phone" placeholder="+57 3XX XXX XXXX" type="tel" style="flex:1" onkeydown="if(event.key==='Enter')searchRes()">
+      <button class="btn br" onclick="searchRes()">Buscar</button>
+    </div>
+  </div>
+  <div id="cancel-results"></div>
+  <div style="margin-top:16px;text-align:center">
+    <button class="btn bg" onclick="showPage('client')">← Volver al horario</button>
+  </div>
+</div>
+
+<div class="page" id="page-admin">
+  <div class="atb">
+    <div class="stl" style="margin-bottom:0">📊 Panel de administración</div>
+    <button class="btn bx" onclick="exportXLS()">📥 Exportar a Excel</button>
+  </div>
+  <div class="sgrid" id="admin-stats"><div class="scard"><div class="sp" style="width:20px;height:20px;margin:8px auto"></div></div></div>
+  <div class="sw2">
+    <span class="sic">🔍</span>
+    <input class="si2" id="admin-search" placeholder="Buscar por nombre, cédula o teléfono..." oninput="renderAdmin()">
+  </div>
+  <div id="admin-container"><div class="ld"><div class="sp"></div>Cargando...</div></div>
+</div>
+
+<div class="ov" id="overlay" style="display:none" onclick="closeOvOut(event)">
+  <div class="modal" id="mc"></div>
+</div>
+
+<script>
+const FB={apiKey:"AIzaSyBU87VBniljkK6fRGm5s2MzU6BQsX4KJ10",authDomain:"auafit-reservas.firebaseapp.com",projectId:"auafit-reservas",storageBucket:"auafit-reservas.firebasestorage.app",messagingSenderId:"790076589606",appId:"1:790076589606:web:0f4e223b9d620a38a2c8e7"};
+const DEMO=false,CAP=9;
+const PLANS=[
+  {id:'inmersion',name:'Inmersión',icon:'💧',desc:'1 sesión · $60.000'},
+  {id:'impulso',name:'Plan Impulso',icon:'🚀',desc:'4 sesiones · $218.000'},
+  {id:'ritmo',name:'Plan Ritmo',icon:'🔥',desc:'8 sesiones · $398.000'},
+];
+const SCH=[
+  {day:1,label:'Lunes',time:'9:00 AM',name:'Yoga',icon:'🧘'},
+  {day:1,label:'Lunes',time:'5:30 PM',name:'HIIT',icon:'⚡'},
+  {day:3,label:'Miércoles',time:'9:00 AM',name:'Pilates',icon:'🤸'},
+  {day:3,label:'Miércoles',time:'5:30 PM',name:'Power y HIIT',icon:'💪'},
+  {day:5,label:'Viernes',time:'9:00 AM',name:'Power y HIIT',icon:'💪'},
+  {day:5,label:'Viernes',time:'5:30 PM',name:'Rumba',icon:'🎵'},
+  {day:6,label:'Sábado',time:'9:00 AM',name:'HIIT · Power',icon:'🔥'},
+];
+const C1=`Queremos inspirar a más personas a cuidar su salud. Durante el evento tomaremos fotos y videos enfocados en la belleza del espacio y la dinámica de la actividad. Aunque es posible que aparezcan rostros, el objetivo es mostrar el ambiente y la energía del grupo con fines promocionales de Aua Fit.`;
+const C2=`Tu seguridad es nuestra prioridad y contamos con protocolos profesionales. Sin embargo, toda actividad física en agua conlleva riesgos naturales. Al inscribirme, confirmo que participo voluntariamente, que mi estado de salud me permite realizar ejercicio y entiendo que Aua Fit toma todas las precauciones, pero no se hace responsable por incidentes fuera de su control o por condiciones de salud preexistentes no informadas.`;
+
+function mkConsent(){
+  return `<div class="cbox">
+    <div class="ctit">Consentimientos requeridos *</div>
+    <label class="citem">
+      <input type="checkbox" id="ck1">
+      <span class="ctxt">${C1}<b>✅ Sí, acepto y autorizo el uso de material audiovisual donde pueda aparecer mi imagen para fines promocionales de AUA FIT.</b></span>
+    </label>
+    <label class="citem">
+      <input type="checkbox" id="ck2">
+      <span class="ctxt">${C2}<b>✅ Sí, he leído, entiendo los riesgos y participo bajo mi propia responsabilidad.</b></span>
+    </label>
+  </div>`;
+}
+function chkConsent(){
+  const a=document.getElementById('ck1'),b=document.getElementById('ck2');
+  if(!a||!b||!a.checked||!b.checked){ntf('⚠️ Debes aceptar ambos consentimientos para continuar');return false;}
+  return true;
+}
+
+function chkAdmin(){
+  if(window.location.hash==='#admin'){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-admin').classList.add('active');
+    document.getElementById('cancel-nav-btn').style.display='none';
+    renderAdmin();
+  }
+}
+window.addEventListener('hashchange',chkAdmin);
+
+let dR={},dC={},wOff=0,mSt={},db2;
+function gDB(){if(!db2&&!DEMO)db2=firebase.firestore();return db2;}
+function getMon(o=0){const d=new Date(),dy=d.getDay(),df=d.getDate()-dy+(dy===0?-6:1);d.setDate(df+o*7);d.setHours(0,0,0,0);return d;}
+function getWeek(o=0){
+  const mon=getMon(o);
+  return SCH.map(t=>{
+    const d=new Date(mon);d.setDate(d.getDate()+(t.day===0?6:t.day-1));
+    const ds=d.toISOString().split('T')[0];
+    const id=`${ds}_${t.time.replace(/\s/g,'').replace(':','')}`;
+    return{...t,date:d,ds,id};
+  });
+}
+function getMap(){const m={};for(let w=-4;w<=12;w++)getWeek(w).forEach(c=>m[c.id]=c);return m;}
+function fds(d){return d.toLocaleDateString('es-CO',{day:'numeric',month:'short'})}
+function ini(n){return(n||'?').trim().split(' ').slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
+function nph(p){return(p||'').replace(/\D/g,'')}
+function ntf(msg){const el=document.createElement('div');el.className='ntf';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+
+async function getRvs(cid){if(DEMO)return dR[cid]||[];const s=await gDB().collection('reservations').where('classId','==',cid).get();return s.docs.map(d=>({id:d.id,...d.data()}));}
+async function getWL(cid){if(DEMO)return dR['w_'+cid]||[];const s=await gDB().collection('waitlist').where('classId','==',cid).get();return s.docs.map(d=>({id:d.id,...d.data()}));}
+async function getRvsByPhone(phone){
+  const n=nph(phone);
+  if(DEMO){const a=[];Object.keys(dR).forEach(k=>{if(!k.startsWith('w_'))dR[k].forEach(r=>{if(nph(r.phone)===n)a.push({...r,classId:k});});});return a;}
+  const s=await gDB().collection('reservations').get();
+  return s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>nph(r.phone)===n);
+}
+async function getClient(ced){if(DEMO)return dC[ced]||null;const s=await gDB().collection('clients').doc(ced).get();return s.exists?{id:s.id,...s.data()}:null;}
+async function saveClient(data){if(DEMO){dC[data.cedula]=data;return;}await gDB().collection('clients').doc(data.cedula).set(data,{merge:true});}
+async function addRv(cid,data){if(DEMO){if(!dR[cid])dR[cid]=[];dR[cid].push({...data,id:'r'+Date.now()});return;}await gDB().collection('reservations').add({classId:cid,...data,createdAt:new Date()});}
+async function addWL2(cid,data){if(DEMO){const k='w_'+cid;if(!dR[k])dR[k]=[];dR[k].push({...data,id:'w'+Date.now()});return;}await gDB().collection('waitlist').add({classId:cid,...data,createdAt:new Date()});}
+async function delRv(id){if(DEMO){Object.keys(dR).forEach(k=>{if(!k.startsWith('w_'))dR[k]=dR[k].filter(r=>r.id!==id);});return;}await gDB().collection('reservations').doc(id).delete();}
+async function delRv2(cid,id){if(DEMO){dR[cid]=(dR[cid]||[]).filter(r=>r.id!==id);return;}await gDB().collection('reservations').doc(id).delete();}
+
+async function renderSchedule(){
+  const cls=getWeek(wOff);
+  const mon=getMon(wOff),sun=new Date(mon);sun.setDate(sun.getDate()+6);
+  document.getElementById('week-label').textContent=`${fds(mon)} — ${fds(sun)}`;
+  const con=document.getElementById('schedule-container');
+  con.innerHTML='<div class="ld"><div class="sp"></div>Actualizando...</div>';
+  const sm={};
+  await Promise.all(cls.map(async c=>{const rv=await getRvs(c.id),wl=await getWL(c.id);sm[c.id]={b:rv.length,w:wl.length};}));
+  const bd={};cls.forEach(c=>{if(!bd[c.label])bd[c.label]=[];bd[c.label].push(c);});
+  let html='';
+  for(const[day,arr]of Object.entries(bd)){
+    html+=`<div class="dg"><div class="dh">${day} · ${fds(arr[0].date)}</div>`;
+    arr.forEach(c=>{
+      const{b,w}=sm[c.id]||{b:0,w:0};
+      const sp=CAP-b,full=sp<=0;
+      const sc=full?'szero':sp<=2?'slow':'sok';
+      const now=new Date();now.setHours(0,0,0,0);
+      const past=c.date<now;
+      const btn=past
+        ?`<button class="btn" style="background:#f1f5f9;color:var(--muted);cursor:not-allowed;font-size:12px" disabled>Fecha pasada</button>`
+        :full
+        ?`<button class="btn bw" onclick="openWL('${c.id}','${c.name}','${c.label}','${c.time}','${c.ds}')">Lista espera${w>0?` (${w})`:''}</button>`
+        :`<button class="btn br" onclick="openRv('${c.id}','${c.name}','${c.label}','${c.time}','${c.ds}')">Reservar</button>`;
+      html+=`<div class="cc"><div class="tc">${c.time}</div><div class="ci"><div class="cn">${c.icon} ${c.name}</div><div class="cl">📍 Hotel InterContinental Cali · Piscina</div></div><div class="sw"><div class="sn ${sc}">${full?'🚫':sp}</div><div class="sl">${full?'Lleno':'cupos'}</div></div>${btn}</div>`;
+    });
+    html+='</div>';
+  }
+  con.innerHTML=html;
+}
+function changeWeek(d){wOff+=d;renderSchedule();}
+
+function openRv(id,name,day,time,ds){mSt={type:null,plan:null,client:null,classId:id,info:{name,day,time,ds},wl:false};showOv();step1();}
+function openWL(id,name,day,time,ds){mSt={type:null,plan:null,client:null,classId:id,info:{name,day,time,ds},wl:true};showOv();step1(true);}
+function showOv(){document.getElementById('overlay').style.display='flex';}
+function closeOv(){document.getElementById('overlay').style.display='none';}
+function closeOvOut(e){if(e.target.id==='overlay')closeOv();}
+
+function step1(wl=false){
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">${wl?'📋 Lista de espera':'📅 Reservar cupo'}</div>
+    <div class="ms">${mSt.info.name} · ${mSt.info.day} ${mSt.info.time}</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">¿Cómo asistirá?</p>
+    <div class="tc2">
+      <div class="to" onclick="selType('inmersion')" id="t-inmersion"><div class="ti">💧</div><div class="tn">Inmersión</div><div class="td">1 sesión · $60.000</div></div>
+      <div class="to" onclick="selType('plan')" id="t-plan"><div class="ti">📋</div><div class="tn">Con plan</div><div class="td">4 u 8 sesiones</div></div>
+    </div>
+    <div class="mf">
+      <button class="btn bg" onclick="closeOv()">Cancelar</button>
+      <button class="btn br" onclick="step2()" id="btn-next" disabled style="opacity:.4">Siguiente →</button>
+    </div>`;
+}
+function selType(t){
+  mSt.type=t;
+  document.querySelectorAll('.to').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('t-'+t).classList.add('sel');
+  const b=document.getElementById('btn-next');b.disabled=false;b.style.opacity='1';
+}
+function step2(){if(!mSt.type)return;if(mSt.type==='inmersion')stepInmersion();else stepPlan();}
+
+function stepInmersion(){
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">💧 Inmersión</div>
+    <div class="ms">${mSt.info.name} · ${mSt.info.day} ${mSt.info.time}</div>
+    <div class="fg"><label class="fl">Nombre completo *</label><input class="fi" id="f-name" placeholder="Nombre completo"></div>
+    <div class="fg"><label class="fl">Teléfono / WhatsApp *</label><input class="fi" id="f-phone" placeholder="+57 3XX XXX XXXX" type="tel"></div>
+    ${mkConsent()}
+    <div class="mf">
+      <button class="btn bg" onclick="step1()">← Atrás</button>
+      <button class="btn br" onclick="subInmersion()">Confirmar reserva ✓</button>
+    </div>`;
+}
+
+async function subInmersion(){
+  const name=document.getElementById('f-name').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  if(!name||!phone){if(!name)document.getElementById('f-name').classList.add('err');if(!phone)document.getElementById('f-phone').classList.add('err');ntf('Por favor completa todos los campos');return;}
+  if(!chkConsent())return;
+  mSt.client={name,phone};mSt.plan=PLANS[0];await finalize();
+}
+
+function stepPlan(){
+  const plans=PLANS.filter(p=>p.id!=='inmersion');
+  const cards=plans.map(p=>`<div class="po" onclick="selPlan('${p.id}')" id="p-${p.id}"><div style="font-size:20px;margin-bottom:4px">${p.icon}</div><div class="pn">${p.name}</div><div class="pd">${p.desc}</div></div>`).join('');
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">Selecciona tu plan</div>
+    <div class="ms">${mSt.info.name} · ${mSt.info.day} ${mSt.info.time}</div>
+    <div class="pg">${cards}</div>
+    <hr class="div" style="margin:16px 0">
+    <p style="font-size:12px;color:var(--muted)">¿Ya tienes cuenta? Ingresa tu cédula para autocompletar.</p>
+    <div class="fg" style="margin-top:8px"><label class="fl">Cédula (opcional)</label>
+    <div style="display:flex;gap:8px"><input class="fi" id="lk-ced" placeholder="Número de cédula" style="flex:1"><button class="btn bg" style="padding:10px 14px" onclick="lookupC()">Buscar</button></div></div>
+    <div id="lk-res"></div>
+    <div class="mf">
+      <button class="btn bg" onclick="step1()">← Atrás</button>
+      <button class="btn br" onclick="goForm()" id="btn-np" disabled style="opacity:.4">Siguiente →</button>
+    </div>`;
+}
+function selPlan(id){
+  mSt.plan=PLANS.find(p=>p.id===id);
+  document.querySelectorAll('.po').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('p-'+id).classList.add('sel');
+  const b=document.getElementById('btn-np');b.disabled=false;b.style.opacity='1';
+}
+async function lookupC(){
+  const ced=document.getElementById('lk-ced').value.trim();if(!ced)return;
+  const el=document.getElementById('lk-res');el.innerHTML='<p style="font-size:12px;color:var(--muted)">Buscando...</p>';
+  const c=await getClient(ced);
+  if(c){mSt.client=c;el.innerHTML=`<div class="eb">✅ Cliente encontrado: <strong>${c.name}</strong><br><span style="font-size:12px">${c.email||''} · ${c.phone||''}</span></div>`;}
+  else{el.innerHTML='<p style="font-size:12px;color:var(--muted)">No encontrado. Se solicitarán tus datos.</p>';mSt.client=null;}
+}
+async function goForm(){if(!mSt.plan)return;if(mSt.client)stepConfirm();else{const ced=document.getElementById('lk-ced')?.value?.trim()||'';stepForm(ced);}}
+
+function stepForm(ced=''){
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">Datos del cliente</div>
+    <div class="ms">Se guardarán para futuras reservas</div>
+    <div class="fg"><label class="fl">Nombre completo *</label><input class="fi" id="f-name" placeholder="Nombre completo"></div>
+    <div class="fg"><label class="fl">Cédula *</label><input class="fi" id="f-ced" placeholder="Número de cédula" value="${ced}"></div>
+    <div class="fg"><label class="fl">Teléfono / WhatsApp *</label><input class="fi" id="f-phone" placeholder="+57 3XX XXX XXXX" type="tel"></div>
+    <div class="fg"><label class="fl">Dirección</label><input class="fi" id="f-addr" placeholder="Dirección de residencia"></div>
+    <div class="fg"><label class="fl">Correo electrónico</label><input class="fi" id="f-email" placeholder="correo@ejemplo.com" type="email"></div>
+    ${mkConsent()}
+    <div class="mf">
+      <button class="btn bg" onclick="stepPlan()">← Atrás</button>
+      <button class="btn br" onclick="subForm()">Confirmar reserva ✓</button>
+    </div>`;
+}
+async function subForm(){
+  const name=document.getElementById('f-name').value.trim(),ced=document.getElementById('f-ced').value.trim(),phone=document.getElementById('f-phone').value.trim(),addr=document.getElementById('f-addr').value.trim(),email=document.getElementById('f-email').value.trim();
+  let ok=true;['f-name','f-ced','f-phone'].forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('err');ok=false;}else el.classList.remove('err');});
+  if(!ok){ntf('Por favor completa los campos obligatorios');return;}
+  if(!chkConsent())return;
+  await saveClient({name,cedula:ced,phone,address:addr,email,updatedAt:new Date().toISOString()});
+  mSt.client={name,cedula:ced,phone,address:addr,email};await finalize();
+}
+
+function stepConfirm(){
+  const{client,plan,info}=mSt;
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">Confirmar reserva</div>
+    <div class="ms">${info.name} · ${info.day} ${info.time}</div>
+    <div class="eb"><strong>${client.name}</strong><br>📱 ${client.phone||'—'} &nbsp;|&nbsp; 📧 ${client.email||'—'}<br>Plan: <strong>${plan.name}</strong></div>
+    ${mkConsent()}
+    <div class="mf">
+      <button class="btn bg" onclick="stepPlan()">← Atrás</button>
+      <button class="btn br" onclick="subConfirm()">Confirmar ✓</button>
+    </div>`;
+}
+async function subConfirm(){if(!chkConsent())return;await finalize();}
+
+async function finalize(){
+  const{classId,info,client,plan,wl}=mSt;
+  const data={name:client.name,phone:client.phone||'',cedula:client.cedula||'',email:client.email||'',plan:plan.name,planId:plan.id,type:plan.id==='primera'?'primera':'plan',createdAt:new Date().toISOString()};
+  if(wl){await addWL2(classId,data);showSuccess(client.name,info,plan,true);}
+  else{
+    const ex=await getRvs(classId);
+    if(ex.length>=CAP){ntf('⚠️ Clase llena. Agregando a lista de espera...');await addWL2(classId,data);showSuccess(client.name,info,plan,true);return;}
+    const dup=ex.find(r=>nph(r.phone)===nph(client.phone)||(client.cedula&&r.cedula===client.cedula));
+    if(dup){ntf(`⚠️ ${client.name} ya tiene reserva en esta clase`);closeOv();renderSchedule();return;}
+    await addRv(classId,data);showSuccess(client.name,info,plan,false);
+  }
+  renderSchedule();
+}
+function showSuccess(name,info,plan,wl){
+  document.getElementById('mc').innerHTML=`
+    <div class="sb">
+      <div class="si sig">${wl?'📋':'✅'}</div>
+      <div class="stit">${wl?'Agregado a lista de espera':'¡Reserva confirmada!'}</div>
+      <div class="sdet"><strong>${name}</strong><br>${info.name} · ${info.day} ${info.time}<br>📍 Hotel InterContinental Cali<br>💳 ${plan.name}</div>
+      <div style="margin-top:14px"><button class="btn br" onclick="closeOv()" style="width:100%">Listo</button></div>
+    </div>`;
+}
+
+async function searchRes(){
+  const phone=document.getElementById('cancel-phone').value.trim();
+  if(!phone){document.getElementById('cancel-phone').classList.add('err');ntf('Ingresa tu número de WhatsApp');return;}
+  document.getElementById('cancel-phone').classList.remove('err');
+  const el=document.getElementById('cancel-results');
+  el.innerHTML='<div class="ld"><div class="sp"></div>Buscando...</div>';
+  const rvs=await getRvsByPhone(phone);
+  const map=getMap();
+  const now=new Date();now.setHours(0,0,0,0);
+  const active=rvs.filter(r=>{const c=map[r.classId];return c&&c.date>=now;});
+  if(active.length===0){el.innerHTML=`<div style="text-align:center;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:12px"><div style="font-size:32px;margin-bottom:10px">🔍</div><div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:6px">No encontramos reservas</div><div style="font-size:13px;color:var(--muted)">No hay reservas activas para el número ${phone}</div></div>`;return;}
+  let html=`<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px">Reservas activas — ${active.length} encontrada${active.length>1?'s':''}</div>`;
+  active.forEach(r=>{
+    const c=map[r.classId]||{};
+    html+=`<div class="rvc"><div style="font-size:28px">${c.icon||'📅'}</div><div class="rvi"><div class="rvcl">${c.name||r.classId}</div><div class="rvcm">${c.label||''} ${c.time||''} · ${c.ds||''}</div><div class="rvcm">👤 ${r.name} · 💳 ${r.plan}</div></div><button class="btn bd" onclick="cfmCancel('${r.id}','${r.classId}','${(c.name||'').replace(/'/g,"\\'")}','${(c.label||'')+' '+(c.time||'')}','${r.name}','${nph(r.phone)}')">Cancelar</button></div>`;
+  });
+  el.innerHTML=html;
+}
+function cfmCancel(rid,cid,cn,ct,rname,rphone){
+  showOv();
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">Cancelar reserva</div>
+    <div class="ms">¿Estás seguro que deseas cancelar?</div>
+    <div style="background:#fff5f5;border:1.5px solid #fca5a5;border-radius:10px;padding:14px;margin-bottom:16px"><div style="font-size:15px;font-weight:700;color:var(--navy)">${cn}</div><div style="font-size:13px;color:var(--muted);margin-top:4px">${ct}</div><div style="font-size:13px;color:var(--muted)">👤 ${rname}</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Si hay personas en lista de espera, se les notificará por WhatsApp.</p>
+    <div class="mf">
+      <button class="btn bg" onclick="closeOv()">No, volver</button>
+      <button class="btn bds" onclick="doCancel('${rid}','${cid}','${cn}','${ct}','${rname}','${rphone}')">Sí, cancelar</button>
+    </div>`;
+}
+async function doCancel(rid,cid,cn,ct,rname,rphone){
+  document.getElementById('mc').innerHTML='<div class="ld"><div class="sp"></div>Cancelando...</div>';
+  await delRv(rid);
+  const wl=await getWL(cid);
+  let waLink=null;
+  if(wl.length>0){const f=wl[0];const msg=encodeURIComponent(`🎉 ¡Hola ${f.name}! Se liberó un cupo en AUA FIT.\n\n📅 Clase: ${cn}\n🗓️ ${ct}\n📍 Hotel InterContinental Cali\n\n¡Entra a reservas.auafit.com para confirmar tu cupo! 💧`);const fp=nph(f.phone);waLink=fp?`https://wa.me/${fp}?text=${msg}`:null;}
+  renderSchedule();
+  document.getElementById('mc').innerHTML=`
+    <div class="sb">
+      <div class="si sir">✅</div>
+      <div class="stit">Reserva cancelada</div>
+      <div class="sdet">${rname}<br>${cn} · ${ct}<br><br>Tu cupo ha sido liberado.</div>
+      ${waLink?`<div style="margin-top:16px;padding:12px;background:#f0fdf4;border-radius:10px;border:1px solid #86efac"><div style="font-size:13px;font-weight:600;color:var(--success);margin-bottom:8px">🔔 Hay ${wl.length} persona${wl.length>1?'s':''} en lista de espera</div><a href="${waLink}" target="_blank" class="btn" style="background:#25d366;color:#fff;justify-content:center;display:flex;text-decoration:none">📲 Notificar a ${wl[0].name}</a></div>`:''}
+      <div style="margin-top:14px"><button class="btn bg" onclick="closeOv();showPage('client')" style="width:100%">Volver al horario</button></div>
+    </div>`;
+  document.getElementById('cancel-results').innerHTML='';
+  document.getElementById('cancel-phone').value='';
+}
+
+async function renderAdmin(){
+  const q=document.getElementById('admin-search')?.value?.toLowerCase()||'';
+  let aR=[],aW=[];
+  if(DEMO){Object.keys(dR).forEach(k=>{if(k.startsWith('w_'))dR[k].forEach(r=>aW.push({...r,classId:k.replace('w_','')}));else dR[k].forEach(r=>aR.push({...r,classId:k}));});}
+  else{const[sR,sW]=await Promise.all([gDB().collection('reservations').get(),gDB().collection('waitlist').get()]);aR=sR.docs.map(d=>({id:d.id,...d.data()}));aW=sW.docs.map(d=>({id:d.id,...d.data()}));}
+  const map=getMap();
+  const gr={};
+  aR.forEach(r=>{if(!gr[r.classId])gr[r.classId]={rv:[],wl:[]};gr[r.classId].rv.push(r);});
+  aW.forEach(r=>{if(!gr[r.classId])gr[r.classId]={rv:[],wl:[]};gr[r.classId].wl.push(r);});
+  const cls=Object.keys(gr).map(id=>({...(map[id]||{id,name:id,icon:'📅',label:'—',time:'—',ds:'',date:new Date(0)}),rv:gr[id].rv,wl:gr[id].wl})).sort((a,b)=>new Date(a.ds||0)-new Date(b.ds||0));
+  const tot=aR.length,wtot=aW.length,full=cls.filter(c=>c.rv.length>=CAP).length;
+  document.getElementById('admin-stats').innerHTML=`
+    <div class="scard"><div class="sv">${tot}</div><div class="slbl">Reservas totales</div></div>
+    <div class="scard"><div class="sv">${cls.length}</div><div class="slbl">Clases con reservas</div></div>
+    <div class="scard"><div class="sv">${full}</div><div class="slbl">Clases llenas</div></div>
+    <div class="scard"><div class="sv">${wtot}</div><div class="slbl">En lista espera</div></div>`;
+  let html='';
+  for(const c of cls){
+    const pct=Math.round(c.rv.length/CAP*100);
+    const pfc=pct>=100?'pfu':pct>=60?'plo':'pok';
+    const bdc=pct>=100?'bre':pct>=60?'bam':'bgr';
+    const fr=q?c.rv.filter(r=>(r.name||'').toLowerCase().includes(q)||(r.cedula||'').includes(q)||(r.phone||'').includes(q)):c.rv;
+    const fw=q?c.wl.filter(r=>(r.name||'').toLowerCase().includes(q)||(r.cedula||'').includes(q)||(r.phone||'').includes(q)):c.wl;
+    if(q&&fr.length===0&&fw.length===0)continue;
+    const rr=fr.map(r=>{
+      const msg=encodeURIComponent(`✅ ¡Hola ${r.name}! Tu reserva en AUA FIT ha sido confirmada.\n\n📅 Clase: ${c.name}\n🗓️ ${c.label} ${c.time}\n📍 Hotel InterContinental Cali · Piscina\n💳 ${r.plan}\n\n¡Te esperamos! 💧\nAUA FIT · AquaBOARD`);
+      const wp=nph(r.phone);const wl=wp?`https://wa.me/${wp}?text=${msg}`:'#';
+      return `<div class="rr"><div class="av">${ini(r.name)}</div><div class="ri"><div class="rn">${r.name}</div><div class="rd">📱 ${r.phone||'—'} ${r.cedula?'· CC '+r.cedula:''} · <span class="badge ${r.type==='primera'?'bam':'bbl'}">${r.plan}</span></div></div><div style="display:flex;gap:6px"><a href="${wl}" target="_blank" class="btn bsm" style="background:#25d366;color:#fff;text-decoration:none">📲 WA</a><button class="btn bsm bd" onclick="delR('${c.id}','${r.id}')">Cancelar</button></div></div>`;
+    }).join('');
+    const wr=fw.map(r=>`<div class="rr" style="background:#fffbeb"><div class="av" style="background:#fef3c7;color:#92400e">${ini(r.name)}</div><div class="ri"><div class="rn">${r.name} <span class="wb">espera</span></div><div class="rd">📱 ${r.phone||'—'} · ${r.plan}</div></div><button class="btn bsm bs" onclick="promW('${c.id}','${r.id}')">Mover ↑</button></div>`).join('');
+    html+=`<div class="acard"><div class="ach"><div><span class="act">${c.icon} ${c.name}</span><span style="font-size:12px;color:var(--muted);margin-left:8px">${c.label} ${c.time} · ${c.ds}</span></div><div style="display:flex;align-items:center;gap:8px"><div class="pb" style="width:80px"><div class="pf ${pfc}" style="width:${pct}%"></div></div><span style="font-size:13px;min-width:36px;text-align:right">${c.rv.length}/${CAP}</span><span class="badge ${bdc}">${pct}%</span></div></div>${fr.length||fw.length?`<div class="rl">${rr}${wr}</div>`:`<div style="padding:14px 16px;font-size:13px;color:var(--muted)">Sin reservas</div>`}</div>`;
+  }
+  document.getElementById('admin-container').innerHTML=html||'<div class="ld">Sin resultados</div>';
+}
+async function delR(cid,id){await delRv2(cid,id);ntf('Reserva cancelada');renderAdmin();renderSchedule();}
+async function promW(cid,id){
+  if(DEMO){const wl=dR['w_'+cid]||[];const it=wl.find(r=>r.id===id);if(!it)return;dR['w_'+cid]=wl.filter(r=>r.id!==id);await addRv(cid,it);}
+  else{const s=await gDB().collection('waitlist').doc(id).get();if(!s.exists)return;const it={...s.data()};await gDB().collection('reservations').add({...it,createdAt:new Date()});await gDB().collection('waitlist').doc(id).delete();}
+  ntf('✅ Cliente promovido');renderAdmin();renderSchedule();
+}
+async function exportXLS(){
+  ntf('⏳ Generando Excel...');
+  let aR=[],aW=[];
+  if(DEMO){Object.keys(dR).forEach(k=>{if(k.startsWith('w_'))dR[k].forEach(r=>aW.push({...r,classId:k.replace('w_','')}));else dR[k].forEach(r=>aR.push({...r,classId:k}));});}
+  else{const[sR,sW]=await Promise.all([gDB().collection('reservations').get(),gDB().collection('waitlist').get()]);aR=sR.docs.map(d=>({id:d.id,...d.data()}));aW=sW.docs.map(d=>({id:d.id,...d.data()}));}
+  const map=getMap();
+  const rows=[...aR.map(r=>{const c=map[r.classId]||{};return{'Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Confirmado','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':r.createdAt||''};}),
+    ...aW.map(r=>{const c=map[r.classId]||{};return{'Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Lista espera','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':r.createdAt||''};})];
+  if(rows.length===0){ntf('No hay reservas para exportar');return;}
+  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Reservas');
+  XLSX.writeFile(wb,`AUAFIT_Reservas_${new Date().toISOString().split('T')[0]}.xlsx`);
+  ntf('✅ Excel descargado');
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('cancel-nav-btn').style.display=p==='admin'?'none':'block';
+  if(p==='admin')renderAdmin();
+}
+
+try{if(!DEMO)firebase.initializeApp(FB);}catch(e){}
+chkAdmin();
+renderSchedule();
+</script>
+</body>
+</html>
