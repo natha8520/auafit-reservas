@@ -175,8 +175,9 @@ const FB={apiKey:"AIzaSyBU87VBniljkK6fRGm5s2MzU6BQsX4KJ10",authDomain:"auafit-re
 const DEMO=false,CAP=9;
 const PLANS=[
   {id:'inmersion',name:'Inmersión',icon:'💧',desc:'1 sesión · $60.000'},
-  {id:'impulso',name:'Plan Impulso',icon:'🚀',desc:'4 sesiones · $218.000'},
-  {id:'ritmo',name:'Plan Ritmo',icon:'🔥',desc:'8 sesiones · $398.000'},
+  {id:'impulso',name:'Plan Impulso',icon:'🚀',desc:'4 sesiones · $219.000'},
+  {id:'ritmo',name:'Plan Ritmo',icon:'🔥',desc:'8 sesiones · $339.000'},
+  {id:'plenitud',name:'Plan Plenitud',icon:'⭐',desc:'12 sesiones · $399.000'},
 ];
 const SCH=[
   {day:1,label:'Lunes',time:'9:00 AM',name:'Pilates',icon:'🤸'},
@@ -338,7 +339,7 @@ function stepPlan(){
   document.getElementById('mc').innerHTML=`
     <div class="mt">Selecciona tu plan</div>
     <div class="ms">${mSt.info.name} · ${mSt.info.day} ${mSt.info.time}</div>
-    <div class="pg">${cards}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">${cards}</div>
     <hr class="div" style="margin:16px 0">
     <p style="font-size:12px;color:var(--muted)">¿Ya tienes cuenta? Ingresa tu cédula para autocompletar.</p>
     <div class="fg" style="margin-top:8px"><label class="fl">Cédula (opcional)</label>
