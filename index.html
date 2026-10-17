@@ -219,6 +219,42 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .cic{font-size:18px;margin-right:4px}
 .cins{font-size:12px;color:var(--muted)}
 
+/* Selección de sede */
+.sedes{display:flex;flex-direction:column;gap:14px}
+.sede{position:relative;width:100%;text-align:left;background:#fff;border:2px solid transparent;border-radius:20px;padding:18px;display:flex;align-items:center;gap:16px;cursor:pointer;box-shadow:var(--shadow);font-family:inherit;color:var(--navy);transition:.15s}
+.sede:hover{border-color:var(--cyan)}
+.sede-ic{width:56px;height:56px;border-radius:16px;background:var(--ice);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.sede-t{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.sede-t b{font-family:var(--hf);font-size:20px;font-weight:800}
+.sede-t span{font-size:13px;color:var(--muted)}
+.sede>svg.i{color:var(--muted)}
+.sede-new{background:linear-gradient(135deg,#0B1634 0%,#13285E 100%);color:#fff;border-color:#F5C518}
+.sede-new .sede-ic{background:rgba(245,197,24,.2)}
+.sede-new .sede-t span{color:var(--lb)}
+.sede-new>svg.i{color:#F5C518}
+.sede-badge{position:absolute;top:-11px;left:18px;background:linear-gradient(135deg,#FFE27A,#F5C518);color:#0B1634;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.sede-sw{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 12px;margin-bottom:6px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:var(--lb);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.sede-sw:hover{color:#fff}
+/* Gran Apertura Club Shalom */
+.ehero{background:radial-gradient(110% 80% at 85% 0%,#1E3A8A 0%,#0B1634 55%,#071028 100%)}
+.egold{color:#FFD23F}
+.ebadge{align-self:flex-start;background:linear-gradient(135deg,#FFE27A,#F5C518);color:#0B1634;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:999px;margin-bottom:6px}
+.ehero h1{font-size:36px}
+.einfo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.einfo div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px 12px}
+.einfo span{display:block;font-size:11px;color:var(--lb)}
+.einfo b{font-size:14px;color:#fff}
+.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.slot{background:#fff;border-radius:18px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.slot b{font-family:var(--hf);font-weight:900;font-size:28px;color:var(--navy)}
+.slot .ss{font-size:12px;font-weight:600}
+.cta-gold{width:100%;min-height:60px;padding:0 16px;border-radius:30px;border:1px solid #FFE08A;cursor:pointer;background:linear-gradient(135deg,#FFE27A 0%,#F5C518 35%,#E0A800 70%,#C88A00 100%);color:#0B1634;font-family:var(--hf);font-size:18px;font-weight:900;box-shadow:0 8px 24px rgba(245,197,24,.55);animation:glow 2.2s ease-in-out infinite}
+.cta-gold:hover{filter:brightness(1.05)}
+.cta-gold:disabled{background:#EEF2F6;color:var(--muted);box-shadow:none;animation:none;cursor:not-allowed}
+@keyframes glow{0%,100%{box-shadow:0 8px 24px rgba(245,197,24,.4)}50%{box-shadow:0 8px 36px rgba(245,197,24,.85)}}
+@media(prefers-reduced-motion:reduce){.cta-gold{animation:none}}
+.escar{text-align:center;font-size:13px;color:var(--warn);font-weight:600;margin-top:10px}
+
 /* Detalle de clase */
 .dhero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy) 55%,var(--blue) 100%)}
 .badge2{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);background:var(--lb);padding:5px 10px;border-radius:999px;margin-bottom:6px}
@@ -261,8 +297,34 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
   <button class="hbtn" id="cancel-nav-btn"></button>
 </div>
 
-<div class="page active" id="page-client">
+<div class="page active" id="page-sede">
   <div class="hero"><div class="hero-in">
+    <span class="hero-k">AquaBOARD · Metodología Aqua Body Strong®</span>
+    <h1>¿Dónde quieres entrenar?</h1>
+    <span class="hero-s">Elige tu sede para ver las clases y reservar tu tabla</span>
+  </div></div>
+  <div class="wrap">
+    <div class="sedes">
+      <button class="sede" onclick="goSede('hotel')">
+        <div class="sede-ic">🏨</div>
+        <div class="sede-t"><b>Hotel InterContinental</b><span>Cali · Piscina del hotel</span><span>Clases semanales</span></div>
+        <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="sede sede-new" onclick="goSede('shalom')" style="margin-top:8px">
+        <span class="sede-badge">Nueva sede · 31 de octubre</span>
+        <div class="sede-ic">✨</div>
+        <div class="sede-t"><b>Club Shalom</b><span>Gran Apertura · Evento único</span><span class="egold" style="font-weight:600">Solo 9 tablas por clase</span></div>
+        <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-shalom"><div id="shalom-content"></div></div>
+
+<div class="page" id="page-client">
+  <div class="hero"><div class="hero-in">
+    <button class="sede-sw" onclick="showPage('sede')">🏨 Hotel InterContinental · Cambiar sede</button>
     <span class="hero-k">AquaBOARD · Metodología Aqua Body Strong®</span>
     <h1>Reserva tu clase</h1>
     <span class="hero-s">Hotel InterContinental Cali · Hub Oficial Aqua Body Strong®</span>
@@ -396,7 +458,7 @@ function chkConsent(){
   return true;
 }
 
-function chkAdmin(){if(window.location.hash==='#admin')showPage('admin');}
+function chkAdmin(){if(window.location.hash==='#admin')showPage('admin');else if(window.location.hash==='#shalom')goSede('shalom');else if(window.location.hash==='#hotel')goSede('hotel');}
 function goPublic(){history.replaceState(null,'',location.pathname);showPage('client');renderSchedule();}
 window.addEventListener('hashchange',chkAdmin);
 
@@ -412,7 +474,101 @@ function getWeek(o=0){
     return{...t,date:d,ds,id};
   });
 }
-function getMap(){const m={};for(let w=-4;w<=12;w++)getWeek(w).forEach(c=>m[c.id]=c);return m;}
+// ===== GRAN APERTURA CLUB SHALOM =====
+const EVENT={date:'2026-10-31',label:'Sábado',name:'AquaBOARD Club Shalom',icon:'✨',price:40000,sede:'Club Shalom',slots:['10:00 AM','11:00 AM'],cap:9};
+function eventClasses(){return EVENT.slots.map(t=>({day:6,label:EVENT.label,time:t,name:EVENT.name,icon:EVENT.icon,date:new Date(EVENT.date+'T00:00:00'),ds:EVENT.date,id:`${EVENT.date}_${t.replace(/\s/g,'').replace(':','')}_shalom`,sede:'shalom'}));}
+function getMap(){const m={};for(let w=-4;w<=12;w++)getWeek(w).forEach(c=>m[c.id]=c);eventClasses().forEach(c=>m[c.id]=c);return m;}
+let mainPg='sede';
+function goSede(s){if(s==='hotel'){showPage('client');renderSchedule();}else{showPage('shalom');renderShalom();}}
+async function renderShalom(){
+  const el=document.getElementById('shalom-content');
+  const cls=eventClasses();
+  el.innerHTML=shalomHero()+'<div class="wrap"><div class="ld"><div class="sp"></div>Consultando cupos...</div></div>';
+  const st=await Promise.all(cls.map(async c=>({c,b:(await getRvs(c.id)).length,w:(await getWL(c.id)).length})));
+  const over=new Date(EVENT.date+'T12:00:00')<new Date();
+  const left=st.reduce((a,x)=>a+Math.max(EVENT.cap-x.b,0),0);
+  const slots=st.map(x=>{const sp=Math.max(EVENT.cap-x.b,0),pct=Math.min(Math.round(x.b/EVENT.cap*100),100);
+    return `<div class="slot"><span class="ik">Clase</span><b>${x.c.time.replace(' AM','')} <small style="font-size:14px;font-weight:700;color:var(--muted)">a. m.</small></b>
+      <div class="pb"><div class="pf ${sp===0?'pfu':sp<=3?'plo':'pok'}" style="width:${pct}%"></div></div>
+      <span class="ss" style="color:${sp===0?'var(--danger)':sp<=3?'var(--warn)':'var(--navy)'}">${sp===0?'Agotada · lista de espera':`Quedan ${sp} de ${EVENT.cap} tablas`}</span></div>`;}).join('');
+  el.innerHTML=shalomHero()+`<div class="wrap">
+    <div class="sech"><h2>Elige tu horario</h2><span>2 clases</span></div>
+    <div class="slots">${slots}</div>
+    ${over?'<button class="cta-gold" disabled>Evento finalizado</button>'
+      :`<button class="cta-gold" onclick="openShalom()">${left>0?'¡Quiero mi tabla en la Gran Apertura!':'Unirme a la lista de espera'}</button>
+        <div class="escar">${left>0?`Edición única · Solo quedan ${left} tablas en total`:'Cupos agotados: te avisamos si se libera una tabla'}</div>`}
+    <div class="ncard" style="margin-top:18px"><p>Al inscribirte quedas registrado en AUA FIT con tus datos y consentimientos.</p></div>
+  </div>`;
+}
+function shalomHero(){
+  return `<div class="hero ehero"><div class="hero-in">
+    <button class="sede-sw" onclick="showPage('sede')">✨ Club Shalom · Cambiar sede</button>
+    <span class="ebadge">Nueva sede · Evento único</span>
+    <h1>Gran Apertura <span class="egold">Club Shalom</span></h1>
+    <span class="hero-s" style="font-size:14px">Celebra con nosotros la llegada de AUA FIT a su nueva casa con una clase AquaBOARD de lanzamiento.</span>
+    <div class="einfo">
+      <div><span>Fecha</span><b>Sábado 31 de octubre</b></div>
+      <div><span>Horarios</span><b>10:00 a. m. · 11:00 a. m.</b></div>
+      <div><span>Valor</span><b>${money(EVENT.price)}</b></div>
+      <div><span>Cupo</span><b>9 tablas por clase</b></div>
+    </div>
+  </div></div>`;
+}
+function money(n){return '$'+Number(n).toLocaleString('es-CO');}
+async function openShalom(){
+  const cls=eventClasses();
+  mSt={sh:true};showOv();
+  document.getElementById('mc').innerHTML='<div class="ld"><div class="sp"></div>Cargando...</div>';
+  const st=await Promise.all(cls.map(async c=>({c,b:(await getRvs(c.id)).length})));
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">AquaBOARD Club Shalom</div>
+    <div class="ms">Club Shalom · Sábado 31 de octubre · ${money(EVENT.price)}</div>
+    <p style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:12px">¿A qué hora quieres tu clase?</p>
+    <div class="tc2">${st.map((x,i)=>{const sp=Math.max(EVENT.cap-x.b,0);return `<div class="to" onclick="selSlot(${i})" id="t-s${i}"><div class="ti">${i===0?'🌤️':'☀️'}</div><div class="tn">${x.c.time.replace(' AM',' a. m.')}</div><div class="td" style="color:${sp?'var(--muted)':'var(--danger)'}">${sp?`Quedan ${sp} tablas`:'Agotada · lista de espera'}</div></div>`;}).join('')}</div>
+    <div class="mf"><button class="btn bg" onclick="closeOv()">Cancelar</button>
+      <button class="btn br" onclick="stepShForm()" id="btn-next" disabled style="opacity:.4">Siguiente ${IC.next}</button></div>`;
+  mSt.st=st;
+}
+function selSlot(i){
+  const x=mSt.st[i],c=x.c;
+  mSt={...mSt,classId:c.id,info:{name:c.name,day:c.label,time:c.time,ds:c.ds},wl:x.b>=EVENT.cap,plan:{id:'apertura',name:'Gran Apertura',icon:'✨'}};
+  document.querySelectorAll('.to').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('t-s'+i).classList.add('sel');
+  const b=document.getElementById('btn-next');b.disabled=false;b.style.opacity='1';
+}
+function stepShForm(){
+  if(!mSt.classId)return;
+  document.getElementById('mc').innerHTML=`
+    <div class="mt">Tus datos</div>
+    <div class="ms">${mSt.wl?'Lista de espera · ':''}AquaBOARD Club Shalom · ${mSt.info.time.replace(' AM',' a. m.')}</div>
+    <div class="fg"><label class="fl" for="f-name">Nombre completo *</label><input class="fi" id="f-name" placeholder="Nombre completo"></div>
+    <div class="fg"><label class="fl" for="f-ced">Cédula *</label><input class="fi" id="f-ced" inputmode="numeric" placeholder="Número de cédula"></div>
+    <div class="fg"><label class="fl" for="f-phone">Teléfono / WhatsApp *</label><input class="fi" id="f-phone" placeholder="+57 3XX XXX XXXX" type="tel"></div>
+    <div class="fg"><label class="fl" for="f-email">Correo electrónico *</label><input class="fi" id="f-email" placeholder="correo@ejemplo.com" type="email"></div>
+    <div class="fg"><label class="fl" for="f-addr">Dirección *</label><input class="fi" id="f-addr" placeholder="Dirección de residencia"></div>
+    ${mkConsent()}
+    <div class="mf"><button class="btn bg" onclick="openShalom()">${IC.back} Atrás</button>
+      <button class="btn br" onclick="subShForm()" id="btn-sh">${mSt.wl?'Unirme a la lista':'Reservar mi tabla'}</button></div>`;
+}
+async function subShForm(){
+  const ids=['f-name','f-ced','f-phone','f-email','f-addr'];let ok=true;
+  ids.forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.classList.add('err');ok=false;}else el.classList.remove('err');});
+  const g=id=>document.getElementById(id).value.trim();
+  const email=g('f-email');
+  if(ok&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){document.getElementById('f-email').classList.add('err');ntf('Revisa tu correo electrónico');return;}
+  if(!ok){ntf('Por favor completa todos los campos');return;}
+  if(!chkConsent())return;
+  const b=document.getElementById('btn-sh');b.disabled=true;b.textContent='Guardando...';
+  const client={name:g('f-name'),cedula:g('f-ced').replace(/\D/g,''),phone:g('f-phone'),email,address:g('f-addr')};
+  await saveClient({...client,source:'Gran Apertura Club Shalom',updatedAt:new Date().toISOString()});
+  const data={...client,plan:'Gran Apertura',planId:'apertura',type:'evento',sede:'Club Shalom',price:EVENT.price,createdAt:new Date().toISOString()};
+  const ex=await getRvs(mSt.classId);
+  if(ex.find(r=>r.cedula===client.cedula||nph(r.phone)===nph(client.phone))){ntf(`${client.name} ya tiene tabla en esta clase`);closeOv();renderShalom();return;}
+  let wl=mSt.wl;
+  if(!wl&&ex.length>=EVENT.cap){wl=true;ntf('La clase se llenó. Te agregamos a la lista de espera');}
+  if(wl)await addWL2(mSt.classId,data);else await addRv(mSt.classId,data);
+  showSuccess(client.name,mSt.info,mSt.plan,wl);
+}
 function fds(d){return d.toLocaleDateString('es-CO',{day:'numeric',month:'short'})}
 function ini(n){return(n||'?').trim().split(' ').slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
 function nph(p){return(p||'').replace(/\D/g,'')}
@@ -637,20 +793,21 @@ function showSuccess(name,info,plan,wl){
   closeOv();
   const c=Object.values(getMap()).find(x=>x.name===info.name&&x.ds===info.ds)||{};
   const fecha=`${info.day} ${fds(new Date(info.ds+'T12:00:00'))} · ${info.time}`;
+  const sh=c.sede==='shalom';
   document.getElementById('confirm-content').innerHTML=`
     <div class="cfi">${wl?IC.clock:IC.check}</div>
-    <h1>${wl?'Quedaste en lista de espera':'¡Tu cupo está reservado!'}</h1>
-    <p>${wl?'Si se libera un cupo te avisaremos por WhatsApp.':'Te esperamos en la piscina del Hotel InterContinental Cali.'}</p>
+    <h1>${wl?'Quedaste en lista de espera':sh?'¡Tu tabla está reservada!':'¡Tu cupo está reservado!'}</h1>
+    <p>${wl?'Si se libera un cupo te avisaremos por WhatsApp.':sh?'Nos vemos en la Gran Apertura de nuestra nueva sede en Club Shalom.':'Te esperamos en la piscina del Hotel InterContinental Cali.'}</p>
     <div class="cfs">
       <div class="cfr"><span>Nombre</span><b>${name}</b></div>
-      <div class="cfr"><span>Clase</span><b>${c.icon||''} AquaBOARD ${info.name}</b></div>
+      <div class="cfr"><span>Clase</span><b>${c.icon||''} ${sh?info.name:'AquaBOARD '+info.name}</b></div>
       <div class="cfr"><span>Fecha</span><b>${fecha}</b></div>
-      <div class="cfr"><span>Instructor</span><b>${INSTR.name}</b></div>
-      <div class="cfr"><span>Lugar</span><b>Piscina · InterContinental Cali</b></div>
-      <div class="cfr"><span>Plan</span><b>${plan.icon||''} ${plan.name}</b></div>
+      ${sh?'':`<div class="cfr"><span>Instructor</span><b>${INSTR.name}</b></div>`}
+      <div class="cfr"><span>Lugar</span><b>${sh?'Club Shalom':'Piscina · InterContinental Cali'}</b></div>
+      <div class="cfr"><span>${sh?'Valor':'Plan'}</span><b>${sh?money(EVENT.price):(plan.icon||'')+' '+plan.name}</b></div>
     </div>
     <div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-top:8px">
-      <button class="btn bwh cta" onclick="showPage('client')">Volver a clases</button>
+      <button class="btn bwh cta" onclick="goSede(mainPg==='shalom'?'shalom':'hotel')">Volver a clases</button>
       <button class="btn blk" onclick="showPage('cancel')">Ver o cancelar mis reservas</button>
     </div>`;
   showPage('confirm');
@@ -691,7 +848,7 @@ async function doCancel(rid,cid,cn,ct,rname,rphone){
   await delRv(rid);
   const wl=await getWL(cid);
   let waLink=null;
-  if(wl.length>0){const f=wl[0];const msg=encodeURIComponent(`🎉 ¡Hola ${f.name}! Se liberó un cupo en AUA FIT.\n\n📅 Clase: ${cn}\n🗓️ ${ct}\n📍 Hotel InterContinental Cali\n\n¡Entra a reservas.auafit.com para confirmar tu cupo! 💧`);const fp=nph(f.phone);waLink=fp?`https://wa.me/${fp}?text=${msg}`:null;}
+  if(wl.length>0){const f=wl[0];const msg=encodeURIComponent(`🎉 ¡Hola ${f.name}! Se liberó un cupo en AUA FIT.\n\n📅 Clase: ${cn}\n🗓️ ${ct}\n📍 Hotel InterContinental Cali\n\n¡Entra a reservar.auafit.com para confirmar tu cupo! 💧`);const fp=nph(f.phone);waLink=fp?`https://wa.me/${fp}?text=${msg}`:null;}
   renderSchedule();
   document.getElementById('mc').innerHTML=`
     <div class="sb">
@@ -762,15 +919,15 @@ async function renderAdmin(useCache){
     rows+=`<tr class="crow${isPast?' pst':''}">
       <td class="fd"><b>${c.label}</b><span>${c.date&&c.date.getTime()?fds(c.date):c.ds}</span></td>
       <td style="font-weight:600;white-space:nowrap">${c.time}</td>
-      <td style="white-space:nowrap"><span class="cic">${c.icon||''}</span>AquaBOARD ${c.name}</td>
-      <td class="tins" style="white-space:nowrap">${INSTR.name}</td>
+      <td style="white-space:nowrap"><span class="cic">${c.icon||''}</span>${c.sede==='shalom'?c.name:'AquaBOARD '+c.name}</td>
+      <td class="tins" style="white-space:nowrap">${c.sede==='shalom'?'Club Shalom':INSTR.name}</td>
       <td><div class="cupo"><div class="pb"><div class="pf ${pfc}" style="width:${pct}%"></div></div>${c.rv.length}/${CAP}</div></td>
       <td><span class="wpill${c.wl.length?' has':''}">${c.wl.length}</span></td>
       <td style="text-align:right"><button class="btn bsm bg${isOpen?' open':''}" onclick="toggleCls('${c.id}')">${isOpen?'Ocultar':'Ver lista'} <svg class="i chev" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M6 9l6 6 6-6"/></svg></button></td>
     </tr>`;
     if(isOpen){
       const rr=fr.map(r=>{
-        const msg=encodeURIComponent(`✅ ¡Hola ${r.name}! Tu reserva en AUA FIT ha sido confirmada.\n\n📅 Clase: ${c.name}\n🗓️ ${c.label} ${c.time}\n👤 Instructor: ${INSTR.name}\n📍 Hotel InterContinental Cali · Piscina\n💳 ${r.plan}\n\n¡Te esperamos! 💧\nAUA FIT · AquaBOARD`);
+        const msg=encodeURIComponent(`✅ ¡Hola ${r.name}! Tu reserva en AUA FIT ha sido confirmada.\n\n📅 Clase: ${c.name}\n🗓️ ${c.label} ${c.time}${c.sede==='shalom'?'\n📍 Club Shalom · Gran Apertura AUA FIT\n':`\n👤 Instructor: ${INSTR.name}\n📍 Hotel InterContinental Cali · Piscina\n`}💳 ${r.plan}\n\n¡Te esperamos! 💧\nAUA FIT · AquaBOARD`);
         const wp=nph(r.phone);const wl=wp?`https://wa.me/${wp}?text=${msg}`:'#';
         return `<div class="rr"><div class="av">${ini(r.name)}</div><div class="ri"><div class="rn">${r.name}</div><div class="rd">${r.phone||'—'} ${r.cedula?'· CC '+r.cedula:''} · <span class="badge ${r.type==='primera'?'bam':'bbl'}">${r.plan}</span></div><div class="rdt">Reservó: ${fdt(tsOf(r.createdAt))}</div></div><div style="display:flex;gap:6px"><a href="${wl}" target="_blank" class="btn bsm bwa">${IC.wa} WA</a><button class="btn bsm bd" onclick="delR('${c.id}','${r.id}')">Cancelar</button></div></div>`;
       }).join('');
@@ -779,7 +936,7 @@ async function renderAdmin(useCache){
     }
   }
   document.getElementById('admin-container').innerHTML=rows
-    ?`<div class="tbox"><table class="atable"><thead><tr><th>Fecha</th><th>Hora</th><th>Clase</th><th>Instructor</th><th>Cupos</th><th>Espera</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+    ?`<div class="tbox"><table class="atable"><thead><tr><th>Fecha</th><th>Hora</th><th>Clase</th><th>Instructor / Sede</th><th>Cupos</th><th>Espera</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
     :`<div class="empty"><div class="si sig">${IC.search}</div><div style="font-family:var(--hf);font-size:19px;font-weight:800;color:var(--navy)">${q?'Sin resultados':'No hay reservas en esta vista'}</div></div>`;
 }
 async function delR(cid,id){await delRv2(cid,id);ntf('Reserva cancelada');renderAdmin();renderSchedule();}
@@ -794,8 +951,8 @@ async function exportXLS(){
   if(DEMO){Object.keys(dR).forEach(k=>{if(k.startsWith('w_'))dR[k].forEach(r=>aW.push({...r,classId:k.replace('w_','')}));else dR[k].forEach(r=>aR.push({...r,classId:k}));});}
   else{const[sR,sW]=await Promise.all([gDB().collection('reservations').get(),gDB().collection('waitlist').get()]);aR=sR.docs.map(d=>({id:d.id,...d.data()}));aW=sW.docs.map(d=>({id:d.id,...d.data()}));}
   const map=getMap();
-  const rows=[...aR.map(r=>{const c=map[r.classId]||{};return{'Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Confirmado','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':fdt(tsOf(r.createdAt))};}),
-    ...aW.map(r=>{const c=map[r.classId]||{};return{'Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Lista espera','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':fdt(tsOf(r.createdAt))};})];
+  const rows=[...aR.map(r=>{const c=map[r.classId]||{};return{'Sede':c.sede==='shalom'?'Club Shalom':'Hotel InterContinental','Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Confirmado','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':fdt(tsOf(r.createdAt))};}),
+    ...aW.map(r=>{const c=map[r.classId]||{};return{'Sede':c.sede==='shalom'?'Club Shalom':'Hotel InterContinental','Clase':c.name||r.classId,'Día':c.label||'','Hora':c.time||'','Fecha':c.ds||'','Estado':'Lista espera','Nombre':r.name||'','Cédula':r.cedula||'','Teléfono':r.phone||'','Email':r.email||'','Plan':r.plan||'','Tipo':r.type||'','Fecha reserva':fdt(tsOf(r.createdAt))};})];
   if(rows.length===0){ntf('No hay reservas para exportar');return;}
   const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Reservas');
@@ -806,14 +963,15 @@ async function exportXLS(){
 // Botón de la esquina derecha según la pantalla
 function setHdr(p){
   const hb=document.getElementById('cancel-nav-btn');
-  if(p==='client'){hb.style.display='inline-flex';hb.innerHTML=IC.cal+'<span>Cancelar reserva</span>';hb.setAttribute('aria-label','Cancelar reserva');hb.onclick=()=>showPage('cancel');}
-  else if(p==='detail'||p==='cancel'){hb.style.display='inline-flex';hb.innerHTML=IC.x;hb.setAttribute('aria-label','Volver a clases');hb.onclick=()=>showPage('client');}
+  if(p==='client'||p==='sede'){hb.style.display='inline-flex';hb.innerHTML=IC.cal+'<span>Cancelar reserva</span>';hb.setAttribute('aria-label','Cancelar reserva');hb.onclick=()=>showPage('cancel');}
+  else if(p==='detail'||p==='cancel'||p==='shalom'){hb.style.display='inline-flex';hb.innerHTML=IC.x;hb.setAttribute('aria-label','Volver');hb.onclick=()=>showPage(p==='shalom'?'sede':p==='cancel'?mainPg:'client');}
   else hb.style.display='none';
   document.querySelector('.header').style.display=p==='admin'?'none':'flex';
 }
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
+  if(['sede','client','shalom'].includes(p))mainPg=p;
   setHdr(p);
   if(p==='admin')renderAdmin();
   window.scrollTo(0,0);
