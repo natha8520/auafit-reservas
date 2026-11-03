@@ -499,11 +499,15 @@ function chkAdmin(){if(window.location.hash==='#admin')showPage('admin');else if
 function goPublic(){history.replaceState(null,'',location.pathname);showPage('sede');}
 // ===== ACCESO AL PANEL ADMIN (Google) =====
 // Solo estos correos pueden entrar. Para agregar a alguien, escribe su correo aquí (en minúsculas).
+// AUTH_ON=false: login con Google APAGADO temporalmente (el proyecto de Firebase quedó en una cuenta que ya no existe).
+// Cuando tengamos el proyecto nuevo, se cambia a true.
+const AUTH_ON=false;
 const ADMINS=['natha8520@gmail.com','miguel.moreno@auafit.com'];
 let adminUser=null,authReady=false,loginErr='';
 function isAdmin(u){return !!(u&&u.email&&ADMINS.includes(u.email.toLowerCase()));}
 function initAuth(){
   if(DEMO){authReady=true;adminUser={email:'demo@auafit.com'};return;}
+  if(!AUTH_ON){authReady=true;adminUser={email:'Acceso sin login (temporal)'};return;}
   try{
     firebase.auth().getRedirectResult().catch(e=>{loginErr=authMsg(e);renderLogin();});
     firebase.auth().onAuthStateChanged(u=>{
@@ -535,7 +539,7 @@ async function loginGoogle(){
     loginErr=authMsg(e);renderLogin();
   }
 }
-async function logout(){try{if(!DEMO)await firebase.auth().signOut();}catch(e){}adminUser=null;admData=null;goPublic();}
+async function logout(){if(!AUTH_ON){goPublic();return;}try{if(!DEMO)await firebase.auth().signOut();}catch(e){}adminUser=null;admData=null;goPublic();}
 window.addEventListener('hashchange',chkAdmin);
 
 let dR={},dC={},wOff=0,mSt={},db2;
