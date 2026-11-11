@@ -183,6 +183,9 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .atable tr.pst .fd b{color:var(--muted)}
 .cupo{display:flex;align-items:center;gap:10px;white-space:nowrap}
 .cupo .pb{width:70px}
+.sbadge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;margin-left:6px;vertical-align:middle}
+.s-ho{background:#E6EEFF;color:#003DFC}
+.s-sh{background:#FFF4CC;color:#7A5A00}
 .wpill{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#EEF2F6;color:var(--muted)}
 .wpill.has{background:#FFF4E5;color:var(--warn)}
 .xrow td{background:#F8FAFD;padding:0}
@@ -200,7 +203,8 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stro
   .atable tr.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:14px 16px;border-top:1px solid var(--border)}
   .atable tbody tr.crow:first-child{border-top:none}
   .atable tr.crow td{border:none;padding:0}
-  .atable tr.crow td:nth-child(3){order:-1;width:100%;font-weight:600;color:var(--navy)}
+  .atable tr.crow td:nth-child(3){order:-1;width:100%;font-weight:600;color:var(--navy);white-space:normal!important;line-height:1.9}
+  .atable tr.crow td:nth-child(3) .sbadge{margin-left:2px}
   .atable tr.crow .fd b,.atable tr.crow .fd span{display:inline;font-size:13px}
   .atable tr.crow .fd span{margin-left:4px}
   .atable .tins{display:none}
@@ -564,7 +568,7 @@ const SCH_SH=[
 // Datos de cada sede: cupo, coach, lugar y desde cuándo hay clases
 const SEDES={
   hotel:{sch:SCH,cap:4,coach:'Johan Pinza',place:'Piscina · Hotel InterContinental Cali',dur:''},
-  shalom:{sch:SCH_SH,cap:5,coach:'Ana María Bedoya',place:'Piscina · Club Shalom',dur:'60 min',start:'2026-11-01'},
+  shalom:{sch:SCH_SH,cap:5,coach:'Ana María Bedoya',place:'Piscina · Club Shalom',dur:'60 min',start:'2026-11-01',closed:['2026-11-21']},
 };
 let curSede='hotel';
 function capOf(c){return (c&&c.cap)||CAP;}
@@ -574,7 +578,7 @@ function getWeek(o=0,sede=curSede){
     const d=new Date(mon);d.setDate(d.getDate()+(t.day===0?6:t.day-1));
     const ds=d.toISOString().split('T')[0];
     const id=`${ds}_${t.time.replace(/\s/g,'').replace(':','')}`+(sede==='hotel'?'':'_'+sede);
-    return{...t,date:d,ds,id,sede,cap:S.cap,coach:S.coach,place:S.place,dur:S.dur};
+    return{...t,date:d,ds,id,sede,cap:S.cap,coach:S.coach,place:S.place,dur:S.dur,closed:!!(S.closed&&S.closed.includes(ds))};
   }).filter(c=>!S.start||c.ds>=S.start);
 }
 // ===== GRAN APERTURA CLUB SHALOM =====
@@ -707,7 +711,7 @@ let selDay=null;
 function today0(){const n=new Date();n.setHours(0,0,0,0);return n;}
 function selectDay(ds){selDay=ds;renderSchedule();}
 async function renderSchedule(){
-  const cls=getWeek(wOff);
+  const cls=getWeek(wOff).filter(c=>!c.closed); // días bloqueados no se muestran
   const mon=getMon(wOff),sun=new Date(mon);sun.setDate(sun.getDate()+6);
   document.getElementById('week-label').textContent=`${fds(mon)} — ${fds(sun)}`;
   // Cuadros con los días de la semana que tienen clase
@@ -1044,7 +1048,7 @@ async function renderAdmin(useCache){
     rows+=`<tr class="crow${isPast?' pst':''}">
       <td class="fd"><b>${c.label}</b><span>${c.date&&c.date.getTime()?fds(c.date):c.ds}</span></td>
       <td style="font-weight:600;white-space:nowrap">${c.time}</td>
-      <td style="white-space:nowrap"><span class="cic">${c.icon||''}</span>${c.event?c.name:'AquaBOARD '+c.name}</td>
+      <td style="white-space:nowrap"><span class="cic">${c.icon||''}</span>${c.event?c.name:'AquaBOARD '+c.name} <span class="sbadge ${c.sede==='shalom'?'s-sh':'s-ho'}">${c.sede==='shalom'?'Club Shalom':'Hotel InterContinental'}</span>${c.closed?' <span class="badge bre">Día bloqueado</span>':''}</td>
       <td class="tins" style="white-space:nowrap">${c.event?'Club Shalom':`${c.coach||INSTR.name}<br><span style="font-size:12px;color:var(--muted)">${c.sede==='shalom'?'Club Shalom':'Hotel InterContinental'}</span>`}</td>
       <td><div class="cupo"><div class="pb"><div class="pf ${pfc}" style="width:${pct}%"></div></div>${c.rv.length}/${capOf(c)}</div></td>
       <td><span class="wpill${c.wl.length?' has':''}">${c.wl.length}</span></td>
